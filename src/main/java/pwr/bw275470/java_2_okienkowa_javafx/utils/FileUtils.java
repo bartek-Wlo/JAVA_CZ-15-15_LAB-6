@@ -10,7 +10,12 @@ import javafx.scene.image.PixelWriter;
 import javafx.scene.image.WritableImage;
 import javafx.scene.paint.Color;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.concurrent.Callable;
 import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import java.util.regex.Pattern;
 
 public class FileUtils {
@@ -146,6 +151,17 @@ public class FileUtils {
         return output;
     }
 
+
+
+
+
+
+
+
+
+    /*/‾\_/‾\_/‾\_/‾\_/‾\_/‾\_/‾\_/‾\_/‾\_/‾\_/‾\_/‾\_/‾\_/‾\_/‾\_/‾\_/‾\_/‾\_/‾\*/
+    /*\_/‾\_/‾\_/‾\_/‾\_/‾\_/‾\_/‾\_/  Krawędzie  \_/‾\_/‾\_/‾\_/‾\_/‾\_/‾\_/‾\_/*/
+    /*/‾\_/‾\_/‾\_/‾\_/‾\_/‾\_/‾\_/‾\_/‾\_/‾\_/‾\_/‾\_/‾\_/‾\_/‾\_/‾\_/‾\_/‾\_/‾\*/
     public static Image contourImage(Image inputImage) {
         int width = (int) inputImage.getWidth();
         int height = (int) inputImage.getHeight();
@@ -175,5 +191,79 @@ public class FileUtils {
         }
 
         return outputImage;
+    }
+
+
+
+
+    public static Image contourImageParallel(Image inputImage) {
+        int width = (int) inputImage.getWidth();
+        int height = (int) inputImage.getHeight();
+
+        PixelReader reader = inputImage.getPixelReader();
+        WritableImage outputImage = new WritableImage(width, height);
+        PixelWriter writer = outputImage.getPixelWriter();
+
+        int numThreads = 4;
+        ExecutorService executor = Executors.newFixedThreadPool(numThreads);
+        List<Callable<Void>> tasks = new ArrayList<>();
+
+        for (int i = 0; i < numThreads; i++) {
+            int startY = i * height / numThreads;
+            int endY = (i + 1) * height / numThreads;
+
+            tasks.add(new ContourTask(reader, writer, width, height, startY, endY));
+        }
+
+        try {
+            executor.invokeAll(tasks);
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+        } finally {
+            executor.shutdown();
+        }
+
+        return outputImage;
+    }
+
+    static class ContourTask implements Callable<Void> {
+        private final PixelReader reader;
+        private final PixelWriter writer;
+        private final int width, height, startY, endY;
+
+        public ContourTask(PixelReader reader, PixelWriter writer, int width, int height, int startY, int endY) {
+            this.reader = reader;
+            this.writer = writer;
+            this.width = width;
+            this.height = height;
+            this.startY = startY;
+            this.endY = endY;
+        }
+
+        @Override
+        public Void call() {
+            // Zakres ograniczamy, by nie wychodzić poza granice
+            for (int y = Math.max(1, startY); y < Math.min(endY, height - 1); y++) {
+                for (int x = 1; x < width - 1; x++) {
+                    Color current = reader.getColor(x, y);
+                    Color right = reader.getColor(x + 1, y);
+                    Color bottom = reader.getColor(x, y + 1);
+
+                    double diffRight = Math.abs(current.getRed() - right.getRed()) +
+                            Math.abs(current.getGreen() - right.getGreen()) +
+                            Math.abs(current.getBlue() - right.getBlue());
+
+                    double diffBottom = Math.abs(current.getRed() - bottom.getRed()) +
+                            Math.abs(current.getGreen() - bottom.getGreen()) +
+                            Math.abs(current.getBlue() - bottom.getBlue());
+
+                    double edge = Math.min(1.0, diffRight + diffBottom);
+                    Color edgeColor = new Color(edge, edge, edge, 1.0);
+
+                    writer.setColor(x, y, edgeColor);
+                }
+            }
+            return null;
+        }
     }
 }
