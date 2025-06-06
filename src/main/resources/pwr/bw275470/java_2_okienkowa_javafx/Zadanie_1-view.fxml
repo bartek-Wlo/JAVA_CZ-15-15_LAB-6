@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.image.Image?>
+<BorderPane xmlns:fx="http://javafx.com/fxml"
+            fx:controller="pwr.bw275470.java_2_okienkowa_javafx.Controllers.Zadanie_1_Controller"
+            prefHeight="960.0" prefWidth="540.0">
+
+    <center>
+        <VBox alignment="CENTER" spacing="9.0">
+            <padding>
+                <Insets bottom="20.0" left="20.0" right="20.0" top="20.0"/>
+            </padding>
+
+            <HBox spacing="10" alignment="BASELINE_RIGHT">
+                <Button text="Nowe drugie okno" onAction="#OpenNewSecond"/>
+                <Button text="Nowe modalne drugie okno" onAction="#OpenModalSecond"/>
+                <Button text="Zmiana w drugie okno" onAction="#ChangeNewSecond"/>
+            </HBox>
+            <Label text="Platformy Programistyczne .NET i Java"
+                   style="-fx-font-size: 24px; -fx-font-weight: bold;" />
+
+            <ImageView fx:id="logoImageView" fitWidth="920" preserveRatio="true"/>
+
+            <ComboBox fx:id="operationComboBox" promptText="Wybór Operacji:" prefWidth="920"/>
+            <HBox spacing="10" alignment="CENTER">
+                <Button fx:id="Wczytaj" text="Wczytaj Obraz" onAction="#onChooseImageClick" prefWidth="300"/>
+                <Button fx:id="Wykonaj" text="Wykonaj" onAction="#onExecuteOperationClick" prefWidth="300"/>
+                <Button fx:id="Zapisz" text="Zapisz obraz" onAction="#ImageSave" prefWidth="300"/>
+            </HBox>
+            <HBox spacing="10" alignment="CENTER">
+                <Button fx:id="Original" text="Otwórz oryginalny obraz" onAction="#OpenOriginal" prefWidth="300"
+                        style="-fx-background-color: #007bff; -fx-text-fill: white; -fx-font-weight: bold;"/>
+                <Button fx:id="Edytowany" text="Otwórz edytowany obraz" onAction="#OpenEdytowany" prefWidth="300"
+                        style="-fx-background-color: #007bff; -fx-text-fill: white; -fx-font-weight: bold;"/>
+            </HBox>
+            <VBox spacing="5">
+                <Label text="Ostatnia wykonana operacja:" style="-fx-font-weight: bold;" />
+                <Label fx:id="messageOut" text="none" />
+            </VBox>
+        </VBox>
+    </center>
+
+    <bottom>
+        <Label text="Bartosz Włodarczyk | 275470 | 5 V 2025"
+               style="-fx-font-size: 12px; -fx-padding: 10px; -fx-background-color: #f0f0f0;"/>
+    </bottom>
+</BorderPane>

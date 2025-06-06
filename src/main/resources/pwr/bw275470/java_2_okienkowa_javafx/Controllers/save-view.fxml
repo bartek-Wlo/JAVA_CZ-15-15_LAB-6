@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+
+<VBox alignment="CENTER" spacing="20.0" xmlns:fx="http://javafx.com/fxml"
+      fx:controller="pwr.bw275470.java_2_okienkowa_javafx.Controllers.SaveView">
+    <padding>
+        <Insets bottom="20.0" left="20.0" right="20.0" top="20.0"/>
+    </padding>
+
+    <!-- Alert: brak modyfikacji -->
+    <Label fx:id="alertLabel"
+           text="Na pliku nie zostały wykonane żadne operacje!"
+           textFill="orange"
+           visible="false"
+           style="-fx-font-weight: bold;" />
+
+    <!-- Pole na nazwę pliku -->
+    <Label text="Nazwa pliku:" />
+    <TextField fx:id="saveFileName" promptText="Podaj nazwę pliku np. obraz" />
+
+    <!-- Komunikat walidacji długości -->
+    <Label fx:id="fileNameErrorLabel"
+           text="Wpisz co najmniej 3 znaki"
+           textFill="red"
+           visible="false"
+           style="-fx-font-size: 11px;" />
+
+    <!-- Przyciski -->
+    <HBox spacing="10" alignment="CENTER">
+        <Button text="Zapisz obraz" onAction="#onSaveClick"/>
+        <Button text="Anuluj" onAction="#onCancelClick"/>
+    </HBox>
+</VBox>

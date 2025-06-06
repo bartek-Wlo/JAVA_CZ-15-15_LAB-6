@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.*?>
+
+<VBox xmlns="http://javafx.com/javafx"
+      xmlns:fx="http://javafx.com/fxml"
+      fx:controller="pwr.bw275470.java_2_okienkowa_javafx.Controllers.RotateView"
+      prefHeight="400.0" prefWidth="600.0"
+      spacing="20" alignment="CENTER" style="-fx-padding: 20;">
+
+    <!-- Podgląd obrazu -->
+    <ImageView fx:id="previewImage" fitWidth="400" fitHeight="400" preserveRatio="true" />
+
+    <!-- Przycisk obracania -->
+    <HBox spacing="20" alignment="CENTER">
+        <Button fx:id="rotateLeftButton" onAction="#onRotateLeft" text="W lewo" contentDisplay="TOP">
+            <graphic>
+                <ImageView fx:id="leftImage" fitWidth="20" preserveRatio="true"/>
+            </graphic>
+        </Button>
+
+        <Button fx:id="rotateRightButton" onAction="#onRotateRight" text="W prawo" contentDisplay="TOP">
+            <graphic>
+                <ImageView fx:id="rightImage" fitWidth="20" preserveRatio="true"/>
+            </graphic>
+        </Button>
+    </HBox>
+
+    <!-- Przycisk zatwierdzania i anulowania -->
+    <HBox spacing="20" alignment="CENTER">
+        <Button fx:id="applyButton" text="Zatwierdź" onAction="#onApply"/>
+        <Button fx:id="cancelButton" text="Anuluj" onAction="#onCancel"/>
+    </HBox>
+</VBox>

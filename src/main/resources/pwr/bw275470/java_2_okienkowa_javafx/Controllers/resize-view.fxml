@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<VBox xmlns="http://javafx.com/javafx"
+      xmlns:fx="http://javafx.com/fxml"
+      fx:controller="pwr.bw275470.java_2_okienkowa_javafx.Controllers.ResizeView"
+      prefHeight="400.0" prefWidth="600.0"
+      style="-fx-padding: 20;" alignment="CENTER" spacing="20.0">
+
+    <Label text="Zmień rozmiar obrazu"/>
+
+    <HBox spacing="10" alignment="CENTER">
+        <Label text="Szerokość:"/>
+        <TextField fx:id="widthField" promptText="0 - 3000"/>
+    </HBox>
+
+    <HBox spacing="10" alignment="CENTER">
+        <Label text="Wysokość:"/>
+        <TextField fx:id="heightField" promptText="0 - 3000"/>
+    </HBox>
+
+    <!-- NOWE POLE + PRZYCISK DO PRZELICZANIA -->
+    <HBox spacing="10" alignment="CENTER">
+        <Label text="Współczynnik skalowania:"/>
+        <TextField fx:id="scaleField" promptText="np. 1.0, 2.5" />
+        <Button text="Przelicz wg współczynnika" onAction="#onScaleApply" />
+    </HBox>
+
+    <HBox spacing="10" alignment="CENTER">
+        <Button text="Zmień rozmiar" onAction="#onResize"/>
+        <Button text="Parametry Oryginału" onAction="#onRestoreOriginal"/>
+        <Button text="Anuluj" onAction="#onCancel"/>
+    </HBox>
+
+    <Label fx:id="errorLabel" textFill="red"/>
+</VBox>

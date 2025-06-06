@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.control.Button?>
+
+<VBox alignment="CENTER" spacing="20.0" xmlns:fx="http://javafx.com/fxml"
+      fx:controller="pwr.bw275470.java_2_okienkowa_javafx.Controllers.HelloController">
+    <padding>
+        <Insets bottom="20.0" left="20.0" right="20.0" top="20.0"/>
+    </padding>
+
+    <Label fx:id="secondLabel" text="Platformy Programistyczne .NET i Java"/>
+    <Label fx:id="welcomeText"/>
+    <Button text="informacje" onAction="#onHelloButtonClick"/>
+
+    <HBox spacing="10" alignment="CENTER">
+        <Button text="Nowe drugie okno" onAction="#onOpenNewWindowClick"/>
+        <Button text="Nowe modalne drugie okno" onAction="#onOpenNewModalWindowClick"/>
+        <Button text="Zmiana w drugie okno" onAction="#ChangeToNewWindowClick"/>
+    </HBox>
+</VBox>
