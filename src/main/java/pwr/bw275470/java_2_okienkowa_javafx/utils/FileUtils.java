@@ -18,6 +18,10 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.regex.Pattern;
 
+import java.io.BufferedWriter;
+import java.io.IOException;
+import java.nio.file.*;
+
 public class FileUtils {
 
     /**
@@ -26,7 +30,8 @@ public class FileUtils {
      */
     private static final Pattern ILLEGAL_CHARS_PATTERN = Pattern.compile("[\\\\/:*?\"<>|\\p{Cntrl}\\s]");
 
-    private FileUtils() { }
+    private FileUtils() {
+    }
 
     /**
      * Sprawdza, czy nazwa pliku jest prawidłowa.
@@ -89,15 +94,16 @@ public class FileUtils {
                 result[0] = canvas.snapshot(params, rotated);
                 latch.countDown();
             });
-            try { latch.await(); }
-            catch (InterruptedException e) { e.printStackTrace(); }
+            try {
+                latch.await();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
             return result[0];
         } else {
             return canvas.snapshot(params, rotated);
         }
     }
-
-
 
 
     public static Image generateNegativeImage(Image source) {
@@ -127,7 +133,6 @@ public class FileUtils {
     }
 
 
-
     public static Image thresholdImage(Image source, int threshold) {
         if (source == null) return null;
 
@@ -150,13 +155,6 @@ public class FileUtils {
 
         return output;
     }
-
-
-
-
-
-
-
 
 
     /*/‾\_/‾\_/‾\_/‾\_/‾\_/‾\_/‾\_/‾\_/‾\_/‾\_/‾\_/‾\_/‾\_/‾\_/‾\_/‾\_/‾\_/‾\_/‾\*/
@@ -194,76 +192,23 @@ public class FileUtils {
     }
 
 
+    /** Zapisuwane logów do pliku
+     * @param log Wiadomość wpisana do logu
+     */
+    public static void logSaver(String log) {
+        final Path logFilePath = Paths.get(System.getProperty("user.home"), "Documents", "log.txt");
 
+        try{ Files.createDirectories(logFilePath.getParent()); // Validacja istnienia /Documents
+            // Walidacja jeżeli log.txt nie istenieje
+            if (!Files.exists(logFilePath)) {  Files.createFile(logFilePath); }
 
-    public static Image contourImageParallel(Image inputImage) {
-        int width = (int) inputImage.getWidth();
-        int height = (int) inputImage.getHeight();
-
-        PixelReader reader = inputImage.getPixelReader();
-        WritableImage outputImage = new WritableImage(width, height);
-        PixelWriter writer = outputImage.getPixelWriter();
-
-        int numThreads = 4;
-        ExecutorService executor = Executors.newFixedThreadPool(numThreads);
-        List<Callable<Void>> tasks = new ArrayList<>();
-
-        for (int i = 0; i < numThreads; i++) {
-            int startY = i * height / numThreads;
-            int endY = (i + 1) * height / numThreads;
-
-            tasks.add(new ContourTask(reader, writer, width, height, startY, endY));
-        }
-
-        try {
-            executor.invokeAll(tasks);
-        } catch (InterruptedException e) {
-            Thread.currentThread().interrupt();
-        } finally {
-            executor.shutdown();
-        }
-
-        return outputImage;
-    }
-
-    static class ContourTask implements Callable<Void> {
-        private final PixelReader reader;
-        private final PixelWriter writer;
-        private final int width, height, startY, endY;
-
-        public ContourTask(PixelReader reader, PixelWriter writer, int width, int height, int startY, int endY) {
-            this.reader = reader;
-            this.writer = writer;
-            this.width = width;
-            this.height = height;
-            this.startY = startY;
-            this.endY = endY;
-        }
-
-        @Override
-        public Void call() {
-            // Zakres ograniczamy, by nie wychodzić poza granice
-            for (int y = Math.max(1, startY); y < Math.min(endY, height - 1); y++) {
-                for (int x = 1; x < width - 1; x++) {
-                    Color current = reader.getColor(x, y);
-                    Color right = reader.getColor(x + 1, y);
-                    Color bottom = reader.getColor(x, y + 1);
-
-                    double diffRight = Math.abs(current.getRed() - right.getRed()) +
-                            Math.abs(current.getGreen() - right.getGreen()) +
-                            Math.abs(current.getBlue() - right.getBlue());
-
-                    double diffBottom = Math.abs(current.getRed() - bottom.getRed()) +
-                            Math.abs(current.getGreen() - bottom.getGreen()) +
-                            Math.abs(current.getBlue() - bottom.getBlue());
-
-                    double edge = Math.min(1.0, diffRight + diffBottom);
-                    Color edgeColor = new Color(edge, edge, edge, 1.0);
-
-                    writer.setColor(x, y, edgeColor);
-                }
+            try (BufferedWriter writer = Files.newBufferedWriter(logFilePath, StandardOpenOption.APPEND)) {
+                writer.write(log);
+                writer.newLine();
             }
-            return null;
+
+        } catch (IOException e) {
+            System.err.println("Błąd podczas zapisu logu: " + e.getMessage());
         }
     }
 }

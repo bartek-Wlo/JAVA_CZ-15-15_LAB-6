@@ -3,6 +3,7 @@ package pwr.bw275470.java_2_okienkowa_javafx.Controllers;
 import static pwr.bw275470.java_2_okienkowa_javafx.utils.ToastUtils.showToast;
 import static pwr.bw275470.java_2_okienkowa_javafx.utils.ToastUtils.showAlertToast;
 import pwr.bw275470.java_2_okienkowa_javafx.utils.FileUtils;
+import pwr.bw275470.java_2_okienkowa_javafx.utils.FileUtilsThreads;
 
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -44,6 +45,7 @@ public class Zadanie_1_Controller {
 
     @FXML
     public void initialize() {
+        FileUtils.logSaver("============== NOWA INSTACJA PROGRAMU ==============");
         Wczytaj.setDisable(false);
         Wykonaj.setDisable(true);
         Zapisz.setDisable(true);
@@ -130,8 +132,8 @@ public class Zadanie_1_Controller {
 
             case "Negatyw obrazu":
                 onWykonajButtonClick("Negatyw obrazu");
-                try {
-                    zmodyfikowanyObraz = FileUtils.generateNegativeImage(zmodyfikowanyObraz);
+//                try { zmodyfikowanyObraz = FileUtils.generateNegativeImage(zmodyfikowanyObraz);
+                try { zmodyfikowanyObraz = FileUtilsThreads.generateNegativeImageThreads(zmodyfikowanyObraz);
                     showToast(Wykonaj,"Wykonano negatyw obrazu.");
                     modyfikowanyObraz = true; Edytowany.setDisable(false);
                 } catch (Exception e) { showAlertToast("Nie udało się wykonać negatywu:\n"+e); }
@@ -145,7 +147,8 @@ public class Zadanie_1_Controller {
                 ThresholdView thresholdViewController = result.getKey().getController();
                 thresholdViewController.setImagePreview(zmodyfikowanyObraz);
                 thresholdViewController.setThresholdListener(thresholdValue -> {
-                    try{zmodyfikowanyObraz = FileUtils.thresholdImage(zmodyfikowanyObraz, thresholdValue);
+//                    try{zmodyfikowanyObraz = FileUtils.thresholdImage(zmodyfikowanyObraz, thresholdValue);
+                    try{zmodyfikowanyObraz = FileUtilsThreads.thresholdImageThreas(zmodyfikowanyObraz, thresholdValue);
                         showToast(Wykonaj, "Progowanie zostało wykonane!");
                     } catch (Exception e) {showAlertToast("Nie udało się wykonać progowania.");}
                 });
@@ -155,7 +158,8 @@ public class Zadanie_1_Controller {
 
             case "Konturowanie obrazu":
                 onWykonajButtonClick("Konturowanie obrazu");
-                try{zmodyfikowanyObraz = FileUtils.contourImage(zmodyfikowanyObraz);
+                try{zmodyfikowanyObraz = FileUtilsThreads.contourImageThreads(zmodyfikowanyObraz);
+//                try{zmodyfikowanyObraz = FileUtils.contourImage(zmodyfikowanyObraz);
                     showToast(Wykonaj, "Konturowanie zostało przeprowadzone pomyślnie!");
                     modyfikowanyObraz = true; Edytowany.setDisable(false);
                 } catch (Exception e) { showAlertToast("Nie udało się przeprowadzić konturowania:\n"+e); }
@@ -169,6 +173,7 @@ public class Zadanie_1_Controller {
 
     @FXML
     protected void onWykonajButtonClick(String msg) {
+        FileUtils.logSaver("  msg: " + msg);
         messageOut.setText(msg);
     }
 
@@ -193,6 +198,7 @@ public class Zadanie_1_Controller {
         File wskWskazanyPlik = sysOknoWyboruPlikow.showOpenDialog(getStage());
 
         ImageFileLoad(wskWskazanyPlik);
+        FileUtils.logSaver("Wczytuje plik: "+wskWskazanyPlik.getAbsolutePath());
     }
 
     // Pomocnicza metoda do pobrania Stage z dowolnego komponentu (np. ImageView, ComboBox itd.)
@@ -237,6 +243,7 @@ public class Zadanie_1_Controller {
 
     @FXML
     private void ImageSave() {
+        FileUtils.logSaver("Próba zapisania obrazu");
         try {
             FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("save-view.fxml"));
             Scene scene = new Scene(fxmlLoader.load(), 960, 540);
